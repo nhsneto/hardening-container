@@ -64,7 +64,7 @@
 
 ### Remoção de acesso a serviços que não precisam estar acessíveis externamente
 
-- **O que foi modificado:** remoção da chave ports no service "banco" no docker-compose.yml
+- **O que foi modificado:** remoção da chave ports no service "banco" no docker-compose.yml; especificação do endereço 127.0.0.1 para acesso apenas do host, evitando o acesso externo enquanto o app está em desenvolvimento
 - **Objetivo de segurança:** evitar expor o banco de dados às requisições externas, aplicando o princípio do menor privilégio de rede
 - **Risco reduzido:** superfície de ataque, exposição acidental na internet, vazamento de dados sensíveis
 
