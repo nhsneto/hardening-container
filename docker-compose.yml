@@ -2,13 +2,23 @@ services:
 
   app:
     build: .
+    environment:
+      DB_PASSWORD: ${DB_PASSWORD}
     ports:
       - "3000:3000"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 256M
 
   banco:
-    image: mysql:latest
+    image: mysql:8.4
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: sistema
-    ports:
-      - "3306:3306"
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 512M
