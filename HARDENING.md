@@ -8,15 +8,17 @@
 
 3. No diretório do app, o arquivo package.json está vazio, não é um json válido e não há informações sobre os pacotes a serem instalandos. Isso prejudica as decisões de segurança, pois não se sabe quais pacotes devem ser usados. Ainda nesse diretório, o arquivo server.js não executa um servidor web e nem expõe alguma porta, o que prejudica o funcionamento correto do servidor.
 
-4. No Dockerfile, o usuário que executa a aplicação é o root. Isso permite que, se algum usuário ou agente malicioso tiver acesso ao container, ele terá todos os privilégios de adminsitrador para executar qualquer ação de no container, o que implica em uma superfície de ataque maior e controle do container.
+4. No Dockerfile, a instrução COPY copia todos os arquivos do projeto sem o uso de um .dockerignore, expondo arquivos sensíveis como o .env dentro do sistema de arquivos do container, então, caso ocorra uma invasão, o invasor terá acesso às informações contindas no arquivos.
 
-5. No docker-compose.yml, As portas 3000 do aplicativo e 3306 do banco mysql estão acessíveis externamente. A exposição da porta do aplicativo é necessária para ser acessada através do navegador no host, mas a do banco desnecessária, pois o banco só deve se comunicar apenas com o aplicativo e não expor sua porta ao host também, aumentando a superfície de ataque.
+5. No Dockerfile, o usuário que executa a aplicação é o root. Isso permite que, se algum usuário ou agente malicioso tiver acesso ao container, ele terá todos os privilégios de adminsitrador para executar qualquer ação de no container, o que implica em uma superfície de ataque maior e controle do container.
 
-6. No docker-compose.yml, o banco de dados não tem uma versão específica, o que prejudica a rastreabilidade de incidentes, quebra a imutabilidade, introduz novas falhas de segurança das versões mais novas e maior risco de incompaptibilidade com a aplicação e corrompimento de dados.
+6. No docker-compose.yml, As portas 3000 do aplicativo e 3306 do banco mysql estão acessíveis externamente. A exposição da porta do aplicativo é necessária para ser acessada através do navegador no host, mas a do banco desnecessária, pois o banco só deve se comunicar apenas com o aplicativo e não expor sua porta ao host também, aumentando a superfície de ataque.
 
-7. No Dockerfile, a senha de acesso de usuário ao banco é exposta através da variável de ambiente DB_PASSWORD. Já no docker-compose.yml, a senha de acesso root ao banco de dados é exposta através da variável de ambiente MYSQL_ROOT_PASSWORD. Isso representa um grave risco de segurança e o vazamento de dados sensíveis, pois as senhas estão visíveis no código fonte para qualquer usuário que tiver acesso a esse código ver.
+7. No docker-compose.yml, o banco de dados não tem uma versão específica, o que prejudica a rastreabilidade de incidentes, quebra a imutabilidade, introduz novas falhas de segurança das versões mais novas e maior risco de incompaptibilidade com a aplicação e corrompimento de dados.
 
-8. No docker-compose.yml, não existe limite de utilização de CPU e memória, o que pode ocasionar esgotamento de memória e de CPU, através de um ataque por exemplo, prejudicando o funcionamento da aplicação e causando encerramento de processos de outros containers e até do próprio Docker.
+8. No Dockerfile, a senha de acesso de usuário ao banco é exposta através da variável de ambiente DB_PASSWORD. Já no docker-compose.yml, a senha de acesso root ao banco de dados é exposta através da variável de ambiente MYSQL_ROOT_PASSWORD. Isso representa um grave risco de segurança e o vazamento de dados sensíveis, pois as senhas estão visíveis no código fonte para qualquer usuário que tiver acesso a esse código ver.
+
+9. No docker-compose.yml, não existe limite de utilização de CPU e memória, o que pode ocasionar esgotamento de memória e de CPU, através de um ataque por exemplo, prejudicando o funcionamento da aplicação e causando encerramento de processos de outros containers e até do próprio Docker.
 
 ## Medidas Aplicadas
 
@@ -25,6 +27,12 @@
 - **O que foi modificado:** imagem base de ubuntu:latest para node:24.21.0-alpine; remoção da instalação dos pacotes nodejs e npm no Dockerfile; imagem do mysql de mysql:latest para mysql:8.4 no docker-compose.yml
 - **Objetivo de segurança:** reduzir a superfície de ataque
 - **Risco reduzido:** vulnerabilidades em programas, arquivos e serviços não utilizados
+
+**Alteração para copiar apenas os arquivos necessários para o container**
+
+- **O que foi modificado:** os itens copiados para o container na instrução COPY são apenas os necessários para a aplicação
+- **Objetivo de segurança:** princípio do menor privilégio, evitar exposição de senha e dados sensíveis no container
+- **Risco reduzido:** utilizar o container invadido como meio para obter informações sensíveis em arquivos, vazamento de dados
 
 **Alteração do usuário que está executando a aplicação**
 
