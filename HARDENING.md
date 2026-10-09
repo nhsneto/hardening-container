@@ -30,37 +30,37 @@
 
 ## Medidas Aplicadas
 
-**Alteração da imagem base para uma mais enxuta com apenas itens necessários para a aplicação e versão específica**
+### Alteração da imagem base para uma mais enxuta com apenas itens necessários para a aplicação e versão específica
 
 - **O que foi modificado:** imagem base de ubuntu:latest para node:24.21.0-alpine; remoção da instalação dos pacotes nodejs e npm no Dockerfile; imagem do mysql de mysql:latest para mysql:8.4 no docker-compose.yml
 - **Objetivo de segurança:** reduzir a superfície de ataque
 - **Risco reduzido:** vulnerabilidades em programas, arquivos e serviços não utilizados
 
-**Alteração para copiar apenas os arquivos necessários para o container**
+### Alteração para copiar apenas os arquivos necessários para o container
 
 - **O que foi modificado:** os itens copiados para o container na instrução COPY são apenas os necessários para a aplicação
 - **Objetivo de segurança:** princípio do menor privilégio, evitar exposição de senha e dados sensíveis no container
 - **Risco reduzido:** utilizar o container invadido como meio para obter informações sensíveis em arquivos, vazamento de dados
 
-**Alteração do usuário que está executando a aplicação**
+### Alteração do usuário que está executando a aplicação
 
 - **O que foi modificado:** execução da aplicação com o usuário node ao invés do root; copiar arquivos do app para o container como usuário node e grupo node
 - **Objetivo de segurança:** princípio do menor privilégio, caso o container seja invadido, o invasor não terá privilégios de administrador
 - **Risco reduzido:** utilizar o container invadido como meio para obter informações em volumes, atacar outros containers e o host
 
-**Remoção de senhas inseridas no código**
+### Remoção de senhas inseridas no código
 
 - **O que foi modificado:** remoção de senhas hardcoded no Dockerfile e docker-compose.yml; criação do arquivo .env para ser usado no docker-compose.yml através da environment; uso da interpolação para inserir o valor das variáveis de ambiente no docker-compose.yml; criação do .gitignore para evitar que o .env seja enviado ao repositório; criação do .env.example para listar as variáveis de ambiente que o projeto precisa, mas sem dados reais
 - **Objetivo de segurança:** impedir a exposição de senhas e dados sensíveis no código.
 - **Risco reduzido:** acesso não autorizado a sistemas e dados
 
-**Remoção de acesso a serviços que não precisam estar acessíveis externamente**
+### Remoção de acesso a serviços que não precisam estar acessíveis externamente
 
 - **O que foi modificado:** remoção da chave ports no service "banco" no docker-compose.yml
 - **Objetivo de segurança:** evitar expor o banco de dados às requisições externas, aplicando o princípio do menor privilégio de rede
 - **Risco reduzido:** superfície de ataque, exposição acidental na internet, vazamento de dados sensíveis
 
-**Limitação de recursos por containers**
+### Limitação de recursos por containers
 
 - **O que foi modificado:** adição de limites de recursos de CPU e RAM para cada serviço (app e banco)
 - **Objetivo de segurança:** conter falhas de código, mitigar ataques de negação de serviço (DoS), evitar o consumo exagerado de recursos prejudicando toda a arquitetura
