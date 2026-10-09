@@ -60,18 +60,18 @@
 
 ## Análise Final
 
-1. **Qual era o principal risco encontrado no projeto?**
+1. **Qual era o principal risco encontrado no projeto?** O principal risco era de um invasor usar as senhas expostas no código-fonte para o uso criminoso dos dados e para prejudicar o sistema.
 
-2. **Qual alteração de hardening foi mais importante? Por quê?**
+2. **Qual alteração de hardening foi mais importante? Por quê?** A remoção das senhas expostas no código-fonte, porque elas dariam acesso total aos dados sensíveis da aplicação para um invasor.
 
-3. **O que poderia acontecer caso o container da aplicação fosse comprometido?**
+3. **O que poderia acontecer caso o container da aplicação fosse comprometido?** Um invasor poderia usá-lo para ter controle de todo o banco de dados, ter total controle sobre o container como usuário root, além de poder utilizar todos os recursos como RAM e CPU, prejudicando outros containers e até mesmo o Docker.
 
-4. **Como o princípio do menor privilégio foi aplicado?**
+4. **Como o princípio do menor privilégio foi aplicado?** Foi aplicado na mudança do usuário que executa a aplicação no container de root para node; na copia dos arquivos necessários para aplicação executar no container mudando o usuário e o grupo de root para node; na remoção do acesso externo desnecessário às portas do banco de dados.
 
-5. **Por que o .env não deve ser enviado para o repositório?**
+5. **Por que o .env não deve ser enviado para o repositório?** Porque ele contém as informações sensíveis (senhas) que serão usadas para acesso ao banco de dados. Essas informações não podem ser expostas no código-fonte.
 
-6. **Qual é a função do .env.example?**
+6. **Qual é a função do .env.example?** Informar quais variáveis de ambiente o sistema usa sem expor os valores reais sensíveis no código-fonte.
 
-7. **Como o projeto poderia receber novas verificações de segurança automaticamente em uma pipeline CI/CD?**
+7. **Como o projeto poderia receber novas verificações de segurança automaticamente em uma pipeline CI/CD?** Atráves de ferramentas de análise de código estática (SAST). A cada push no projeto, uma etapa do pipeline seria responsável por fazer essa auditoria no código e, caso alguma vulnerabilidade seja encontrara, o pipeline deve ser encerrado e gerar uma mensagem para informar aos responsáveis sobre o problema.
 
-8. **Quais medidas adicionais poderiam ser aplicadas caso essa aplicação fosse executada em Kubernetes?**
+8. **Quais medidas adicionais poderiam ser aplicadas caso essa aplicação fosse executada em Kubernetes?** No Kubernetes, poderíamos usar a gestão de segretos para corrigir a vulnerabilidade das senhas no código-fonte; aplicar o controle de acesso em roles ou clusterRoles para aplicar o princípio do menor privilégio; isolar as redes para evitar expor o banco de dados; utilizar o Pod Security Standards para segurança dos pods e containers; aplicar o Admission controllers, como o Kyverno, para bloquear configurações como imagem latest, container root e recursos sem limites; utilizar scan de imagens na pipeline, como o Grype.
