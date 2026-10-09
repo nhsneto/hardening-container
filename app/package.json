@@ -1,0 +1,19 @@
+{
+  "name": "pratica-hardening",
+  "version": "1.0.0",
+  "description": "Aponti Academy Devops - Prática Hardening",
+  "keywords": [
+    "web",
+    "server"
+  ],
+  "license": "ISC",
+  "author": "Nelson Neto",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.3.0"
+  }
+}

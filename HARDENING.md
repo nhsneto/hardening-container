@@ -16,9 +16,11 @@
 
 3. No Dockerfile, a instrução COPY copia todos os arquivos do projeto sem o uso de um .dockerignore, expondo arquivos sensíveis como o .env dentro do sistema de arquivos do container, então, caso ocorra uma invasão, o invasor terá acesso às informações contindas no arquivos.
 
-4. No Dockerfile, o usuário que executa a aplicação é o root. Isso permite que, se algum usuário ou agente malicioso tiver acesso ao container, ele terá todos os privilégios de adminsitrador para executar qualquer ação de no container, o que implica em uma superfície de ataque maior e controle do container.
+4. No Dockerfile, o comando de instalação (npm install) instala vários pacotes que são usados para desenvolvimento e não para produção, o que implica maior quantidade de arquivos, programas e cache, contribuindo para uma superfície de ataque maior.
 
-5. No Dockerfile, a senha de acesso de usuário ao banco é exposta através da variável de ambiente DB_PASSWORD. Já no docker-compose.yml, a senha de acesso root ao banco de dados é exposta através da variável de ambiente MYSQL_ROOT_PASSWORD. Isso representa um grave risco de segurança e o vazamento de dados sensíveis, pois as senhas estão visíveis no código fonte para qualquer usuário que tiver acesso a esse código ver.
+5. No Dockerfile, o usuário que executa a aplicação é o root. Isso permite que, se algum usuário ou agente malicioso tiver acesso ao container, ele terá todos os privilégios de adminsitrador para executar qualquer ação de no container, o que implica em uma superfície de ataque maior e controle do container.
+
+6. No Dockerfile, a senha de acesso de usuário ao banco é exposta através da variável de ambiente DB_PASSWORD. Já no docker-compose.yml, a senha de acesso root ao banco de dados é exposta através da variável de ambiente MYSQL_ROOT_PASSWORD. Isso representa um grave risco de segurança e o vazamento de dados sensíveis, pois as senhas estão visíveis no código fonte para qualquer usuário que tiver acesso a esse código ver.
 
 ### docker-compose.yml
 
@@ -41,6 +43,12 @@
 - **O que foi modificado:** os itens copiados para o container na instrução COPY são apenas os necessários para a aplicação
 - **Objetivo de segurança:** princípio do menor privilégio, evitar exposição de senha e dados sensíveis no container
 - **Risco reduzido:** utilizar o container invadido como meio para obter informações sensíveis em arquivos, vazamento de dados
+
+### Alteração do comando de instalação de dependências do ambiente de desenvolvimento o ambiente de produção
+
+- **O que foi modificado:** o comando npm install foi substituído pelo comando npm ci && npm cache clean --force; criação da instrução ENV para indicar ambiente de produção node
+- **Objetivo de segurança:** diminuir a superfície de ataques ao remover pacotes que servem apenas para a fase de desenvolvimento; evitar configurações mais permissivas de pacotes quando o ambiente do node é de desenvolvimento
+- **Risco reduzido:** vulnerabilidades em pacotes npm, arquivos e serviços
 
 ### Alteração do usuário que está executando a aplicação
 
